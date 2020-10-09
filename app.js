@@ -3,10 +3,30 @@ const bodyParser = require('body-parser');
 const feedRoutes = require('./routes/feed');
 const mongoose = require('mongoose');
 const path = require('path');
+const multer = require('multer');
+const { uuid } = require('uuidv4');
 
 const app = express();
+ 
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'images');
+    },
+    filename: function(req, file, cb) {
+        cb(null, uuid() + '-' + file.originalname);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
 
 app.use(bodyParser.json());
+app.use(multer({storage: storage, fileFilter: fileFilter}).single('image'));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use((req, res, next) => {
@@ -25,7 +45,7 @@ app.use((error, req, res, next) => {
     res.status(status).json({message: message});
 })
 
-mongoose.connect('mongodb://store-manager:manaGEME173@cluster0-shard-00-00.zurim.mongodb.net:27017,cluster0-shard-00-01.zurim.mongodb.net:27017,cluster0-shard-00-02.zurim.mongodb.net:27017/messageboard?ssl=true&replicaSet=atlas-96hs71-shard-0&authSource=admin&w=majority')
+mongoose.connect('')
 .then(result => {
     app.listen(8080);
 }).catch(err => {
