@@ -7,11 +7,10 @@ const User = require('../models/user');
 exports.getPosts = async (req, res, next) => {
     const page = req.query.page || 1;
     const perPage = 2;
-    let totalItem;
 
     try {
         const totalItem = await Post.find().countDocuments();
-        const posts = await Post.find().populate('creator').skip((page - 1) * perPage).limit(perPage);
+        const posts = await Post.find().skip((page - 1) * perPage).limit(perPage);
 
         res.status(200).json({ message: 'Posts recieved', posts: posts, totalItems: totalItem });
     } catch (err) {
@@ -19,7 +18,7 @@ exports.getPosts = async (req, res, next) => {
             err.statusCode = 500;
         }
         next(err);
-    };
+    }
 };
 
 exports.createPost = async (req, res, next) => {
@@ -38,7 +37,7 @@ exports.createPost = async (req, res, next) => {
     const imageUrl = req.file.path.replace("\\", "/");
     const title = req.body.title;
     const content = req.body.content;
-    let creator;
+ 
     const post = new Post({
         title: title,
         content: content,
@@ -55,14 +54,14 @@ exports.createPost = async (req, res, next) => {
         res.status(201).json({
             message: 'Post created successfully!',
             post: post,
-            creator: { _id: creator._id, name: user.name }
+            creator: { _id: user._id, name: user.name }
         })
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
         }
         next(err);
-    };
+    }
 };
 
 exports.getPost = async (req, res, next) => {
@@ -83,8 +82,8 @@ exports.getPost = async (req, res, next) => {
             err.statusCode = 500;
         }
         next(err);
-    };
-}
+    }
+};
 
 exports.updatePost = async (req, res, next) => {
     const errors = validationResult(req);
@@ -136,7 +135,7 @@ exports.updatePost = async (req, res, next) => {
             err.statusCode = 500;
         }
         next(err);
-    };
+    }
 };
 
 exports.deletePost = async (req, res, next) => {
@@ -170,8 +169,8 @@ exports.deletePost = async (req, res, next) => {
             err.statusCode = 500;
         }
         next(err);
-    };
-}
+    }
+};
 
 const clearImage = filePath => {
     filePath = path.join(__dirname, '..', filePath);
