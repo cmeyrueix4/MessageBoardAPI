@@ -61,7 +61,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    'mongodb://store-manager:manaGEME173@cluster0-shard-00-00.zurim.mongodb.net:27017,cluster0-shard-00-01.zurim.mongodb.net:27017,cluster0-shard-00-02.zurim.mongodb.net:27017/messageboard?ssl=true&replicaSet=atlas-96hs71-shard-0&authSource=admin&retryWrites=true&w=majority' )
+    '' )
   .then(result => {
     const server = app.listen(8080);
     const io = require('socket.io')(server);
